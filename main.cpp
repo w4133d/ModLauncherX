@@ -16,19 +16,22 @@
 *
 */
 
+//#include <QtPlugin>
+//Q_IMPORT_PLUGIN( QWindowsIntegrationPlugin )
+
 #include "stdafx.h"
-#include "mlMainWindow.h"
+#include "MLXMainWindow.h"
 
 int main(int argc, char *argv[])
 {
 	QApplication App(argc, argv);
 
-	QCoreApplication::setOrganizationDomain("treyarch.com");
-	QCoreApplication::setOrganizationName("Treyarch");
-	QCoreApplication::setApplicationName("ModLauncher");
-//	QCoreApplication::setApplicationVersion();
+	QCoreApplication::setOrganizationDomain("github.com/w4133d");
+	QCoreApplication::setOrganizationName("prov3ntus");
+	QCoreApplication::setApplicationName("ModLauncherX");
+	//QCoreApplication::setApplicationVersion();
 
-	mlMainWindow MainWindow;
+	MLXMainWindow MainWindow;
 	MainWindow.UpdateDB();
 	MainWindow.show();
 

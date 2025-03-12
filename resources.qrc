@@ -2,14 +2,20 @@
     <qresource prefix="/">
         <file>resources/AssetEditor.png</file>
         <file>resources/BlackOps3.png</file>
-        <file>resources/Export2Bin.png</file>
         <file>resources/Radiant.png</file>
         <file>resources/ModLauncher.png</file>
-        <file>resources/Go.png</file>
+        <file>stylesheet/down_arrow.png</file>
+        <file>stylesheet/handle.png</file>
         <file>resources/FileNew.png</file>
-        <file>resources/upload.png</file>
         <file>stylesheet/stylesheet/checkbox.png</file>
-        <file>stylesheet/stylesheet/down_arrow.png</file>
         <file>stylesheet/stylesheet/handle.png</file>
+        <file>stylesheet/checkbox.png</file>
+        <file>resources/fonts/FiraCode-Regular.ttf</file>
+        <file>resources/fonts/Inter_18pt-Regular.ttf</file>
+        <file>resources/Go.png</file>
+        <file>stylesheet/stylesheet/down_arrow.png</file>
+        <file>resources/publish.png</file>
+        <file>resources/fonts/Lato-Regular.ttf</file>
+        <file>resources/Export2Bin.png</file>
     </qresource>
 </RCC>

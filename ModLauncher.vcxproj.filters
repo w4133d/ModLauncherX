@@ -37,22 +37,10 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="mlMainWindow.cpp">
+    <ClCompile Include="dvar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_mlMainWindow.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_mlMainWindow.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\qrc_resources.cpp">
-      <Filter>Generated Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\External_Release\moc_mlMainWindow.cpp">
-      <Filter>Generated Files\External_Release</Filter>
-    </ClCompile>
-    <ClCompile Include="dvar.cpp">
+    <ClCompile Include="MLXMainWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -65,12 +53,12 @@
     <CustomBuild Include="ModLauncher.ico">
       <Filter>Resource Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="resources.qrc">
+    <QtRcc Include="resources.qrc">
       <Filter>Resource Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="mlMainWindow.h">
+    </QtRcc>
+    <QtMoc Include="MLXMainWindow.h">
       <Filter>Source Files</Filter>
-    </CustomBuild>
+    </QtMoc>
     <CustomBuild Include="stdafx.h">
       <Filter>Source Files</Filter>
     </CustomBuild>
