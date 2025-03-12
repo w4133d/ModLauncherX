@@ -2,6 +2,8 @@ GeneratedFiles
 ipch
 x64
 sdk
+bin
+.vs/
 *.sdf
 *.opensdf
 *.suo
