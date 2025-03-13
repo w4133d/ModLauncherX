@@ -1,12 +1,15 @@
-- Collapsible map/mod folders?
+- ------- MAP PACKAGER -------
+
+- Collapsible/customisable map/mod folders?
 
 - Open .szc file on context menu ✅
 
 - Colour coding on output window ✅
 
-- Fix borders on buttons and text boxes
+- Fix borders on buttons and text boxes for T7x theme
 
 - Add more dvars
+	- +set com_clientfieldsDebug 1
 
 - Validation check for thumbnail when uploading to workshop
 
@@ -15,11 +18,5 @@
 	- Or even have a separate output widget just for errors?
 
 - Finish writing tooltips
-
-- Disable "Ignore Errors" checkbox, and make them enable it thru settings.
-	- Tooltip tells you that you have to enable it in settings, as it's for advanced users only, and not recommended otherwise.
-	- Tooltip changes when enabled thru settings to the description of "Ignore Errors". Have a note at the end of the tooltip saying "This check box can be disabled at any time in settings."(??)
-
-- Add "+set com_clientfieldsDebug 1" to dvars list
 
 - Fix highlighting and typing not auto-searching

@@ -16,24 +16,24 @@
 *
 */
 
-//#include <QtPlugin>
-//Q_IMPORT_PLUGIN( QWindowsIntegrationPlugin )
+#pragma once
 
 #include "stdafx.h"
-#include "MLXMainWindow.h"
 
-int main( int argc, char *argv[] )
+class MLXPlainTextEdit: public QPlainTextEdit
 {
-	QApplication App( argc, argv );
+	Q_OBJECT
 
-	QCoreApplication::setOrganizationDomain( "github.com/w4133d" );
-	QCoreApplication::setOrganizationName( "prov3ntus" );
-	QCoreApplication::setApplicationName( "ModLauncherX" );
-	//QCoreApplication::setApplicationVersion();
+	public:
+	MLXPlainTextEdit( QWidget *parent = nullptr ): QPlainTextEdit( parent )
+	{
+		setReadOnly( true ); // Prevent user from typing
+	}
 
-	MLXMainWindow MainWindow;
-	MainWindow.UpdateDB();
-	MainWindow.show();
+	QColor DefaultOutputColor = QColor( "#b2b2b2" );
 
-	return App.exec();
-}
+	public slots:
+	void appendColoredText( const QString &text );
+	void handleColorCodes( QString &segment, QTextCursor &cursor );
+	QColor getSelectedTextColor();
+};

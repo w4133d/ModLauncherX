@@ -32,6 +32,7 @@
     <RootNamespace>ModLauncher</RootNamespace>
     <QtMsBuild Condition="'$(QtMsBuild)'=='' OR !Exists('$(QtMsBuild)\qt.targets')">$(MSBuildProjectDirectory)\QtMsBuild</QtMsBuild>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>ModLauncherX</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -91,9 +92,10 @@
     </QtModules>
   </PropertyGroup>
   <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='External_Release|x64'">
-    <QtInstall>5.15.2_msvc2019_64</QtInstall>
+    <QtInstall>6.8.2_msvc2022_54</QtInstall>
     <QtModules>
     </QtModules>
+    <QtOptionsBuildLog>true</QtOptionsBuildLog>
   </PropertyGroup>
   <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <QtModules>
@@ -169,7 +171,7 @@
     <TargetName>$(ProjectName)$(TA_EXECUTABLE_SUFFIX)</TargetName>
     <LinkIncremental />
     <OutDir>bin\External_Release\</OutDir>
-    <LibraryPath>D:\Qt\5.15.2\msvc2019_64\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>D:\Qt\6.8.2\msvc2022_64\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -355,9 +357,11 @@
       <PreprocessorDefinitions>UTILS;RELEASE_BUILD;AS_NO_USER_ALLOC;WIN32;QT_DLL;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>
       </SDLCheck>
-      <AdditionalIncludeDirectories>GeneratedFiles\$(ConfigurationName);GeneratedFiles;$(TA_CODE_PATH);$(TA_CODE_PATH)\tools;.\GeneratedFiles;.;.\GeneratedFiles\$(ConfigurationName);D:\Qt\5.15.2\msvc2019_64\include;$(TL_SDK)/Steamworks/sdk-1.37/public/steam;D:/steamworks_sdk_137/sdk/public/steam;D:\Qt\5.15.2\msvc2019_64\include\QtCore;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>GeneratedFiles\$(ConfigurationName);GeneratedFiles;$(TA_CODE_PATH);$(TA_CODE_PATH)\tools;.\GeneratedFiles;.;.\GeneratedFiles\$(ConfigurationName);D:\Qt\6.8.2\msvc2022_64\include;$(TL_SDK)/Steamworks/sdk-1.37/public/steam;D:/steamworks_sdk_137/sdk/public/steam;D:\Qt\6.8.2\msvc2022_64\include\QtCore;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -365,7 +369,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(TL_SDK)/Steamworks/sdk-1.37/redistributable_bin/win64;$(SolutionDir)/sdk/redistributable_bin/win64;D:\Qt\5.15.2\msvc2019_64\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>D:/steamworks_sdk_137/sdk/redistributable_bin/win64/steam_api64.lib;D:\Qt\5.15.2\msvc2019_64\lib\Qt5Widgets.lib;D:\Qt\5.15.2\msvc2019_64\lib\Qt5Core.lib;D:\Qt\5.15.2\msvc2019_64\lib\Qt5Gui.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>D:/steamworks_sdk_137/sdk/redistributable_bin/win64/steam_api64.lib;D:\Qt\6.8.2\msvc2022_64\lib\Qt6Widgets.lib;D:\Qt\6.8.2\msvc2022_64\lib\Qt6Core.lib;D:\Qt\6.8.2\msvc2022_64\lib\Qt6Gui.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
     </Link>
     <ProjectReference>
@@ -455,6 +459,9 @@
       <DynamicSource Condition="'$(Configuration)|$(Platform)'=='Release|x64'">input</DynamicSource>
       <QtMocFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).moc</QtMocFileName>
     </ClCompile>
+    <ClCompile Include="MLXCallbacks.cpp" />
+    <ClCompile Include="MLXPlainTextEdit.cpp" />
+    <ClCompile Include="MLXThreads.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -521,6 +528,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dvar.h" />
+    <QtMoc Include="MLXPlainTextEdit.h" />
+    <QtMoc Include="MLXThreads.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Import Project="$(QtMsBuild)\qt.targets" Condition="Exists('$(QtMsBuild)\qt.targets')" />

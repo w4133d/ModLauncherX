@@ -1,6 +1,6 @@
 /*
 *
-* Copyright 2016 Activision Publishing, Inc.
+* Copyright 2025 prov3ntus
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -18,103 +18,42 @@
 
 #pragma once
 
-class mlBuildThread : public QThread
+#include "stdafx.h"
+#include "MLXPlainTextEdit.h"
+#include "MLXThreads.h"
+
+
+
+enum mlItemType
 {
-	Q_OBJECT
-
-public:
-	mlBuildThread(const QList<QPair<QString, QStringList>>& Commands, bool IgnoreErrors);
-	void run();
-	bool Succeeded() const
-	{
-		return mSuccess;
-	}
-
-	void Cancel()
-	{
-		mCancel = true;
-	}
-
-signals:
-	void OutputReady(const QString& Output);
-
-protected:
-	QList<QPair<QString, QStringList>> mCommands;
-	bool mSuccess;
-	bool mCancel;
-	bool mIgnoreErrors;
+	ML_ITEM_UNKNOWN,
+	ML_ITEM_MAP,
+	ML_ITEM_MOD
 };
 
-class mlConvertThread : public QThread
+
+class MLXMainWindow: public QMainWindow
 {
 	Q_OBJECT
 
-public:
-	mlConvertThread(QStringList& Files, QString& OutputDir, bool IgnoreErrors, bool mOverwrite);
-	void run();
-	bool Succeeded() const
-	{
-		return mSuccess;
-	}
+		friend class Export2BinGroupBox;
 
-	void Cancel()
-	{
-		mCancel = true;
-	}
-
-signals:
-	void OutputReady(const QString& Output);
-
-protected:
-	QStringList mFiles;
-	QString mOutputDir;
-	bool mOverwrite;
-
-	bool mSuccess;
-	bool mCancel;
-	bool mIgnoreErrors;
-};
-
-class MLXPlainTextEdit: public QPlainTextEdit
-{
-	Q_OBJECT
-
-public:
-	MLXPlainTextEdit( QWidget *parent = nullptr ): QPlainTextEdit( parent )
-	{
-		setReadOnly( true ); // Prevent user from typing
-	}
-
-	QColor DefaultOutputColor = QColor( "#b2b2b2" );
-
-public slots:
-	void appendColoredText( const QString &text );
-	void handleColorCodes( QString &segment, QTextCursor &cursor );
-	QColor getSelectedTextColor();
-};
-
-class MLXMainWindow : public QMainWindow
-{
-	Q_OBJECT
-
-	friend class Export2BinGroupBox;
-
-public:
+	public:
 	MLXMainWindow();
 	~MLXMainWindow();
 
 	void UpdateDB();
 
-	void OnCreateItemResult(CreateItemResult_t* CreateItemResult, bool IOFailure);
+	void OnCreateItemResult( CreateItemResult_t *CreateItemResult, bool IOFailure );
 	CCallResult<MLXMainWindow, CreateItemResult_t> mSteamCallResultCreateItem;
 
-	void OnUpdateItemResult(SubmitItemUpdateResult_t* UpdateItemResult, bool IOFailure);
+	void OnUpdateItemResult( SubmitItemUpdateResult_t *UpdateItemResult, bool IOFailure );
 	CCallResult<MLXMainWindow, SubmitItemUpdateResult_t> mSteamCallResultUpdateItem;
 
-	void OnUGCRequestUGCDetails(SteamUGCRequestUGCDetailsResult_t* RequestDetailsResult, bool IOFailure);
+	void OnUGCRequestUGCDetails( SteamUGCRequestUGCDetailsResult_t *RequestDetailsResult, bool IOFailure );
 	CCallResult<MLXMainWindow, SteamUGCRequestUGCDetailsResult_t> mSteamCallResultRequestDetails;
 
-protected slots:
+	protected slots:
 	void OnFileNew();
 	void OnFileAssetEditor();
 	void OnFileLevelEditor();
@@ -135,12 +74,12 @@ protected slots:
 	void OnDebugButtonPressed();
 	void OnExport2BinChooseDirectory();
 	void OnExport2BinToggleOverwriteFiles();
-	void BuildOutputReady(QString Output);
+	void BuildOutputReady( QString Output );
 	void BuildFinished();
 	void ContextMenuRequested();
 	void SteamUpdate();
 
-protected:
+	protected:
 	enum mlxFonts
 	{
 		FIRA_CODE,
@@ -162,10 +101,11 @@ protected:
 		TOOLTIP_IGNORE_ERRORS,
 	};
 
-	void closeEvent(QCloseEvent* Event);
+	// Seems like this isn't used - pv
+	//void closeEvent( QCloseEvent *Event );
 
-	void StartBuildThread(const QList<QPair<QString, QStringList>>& Commands);
-	void MLXMainWindow::StartConvertThread(QStringList& pathList, QString& outputDir, bool allowOverwrite);
+	void StartBuildThread( const QList<QPair<QString, QStringList>> &Commands );
+	void StartConvertThread( QStringList &pathList, QString &outputDir, bool allowOverwrite );
 
 	void PopulateFileList();
 	void UpdateWorkshopItem();
@@ -183,39 +123,39 @@ protected:
 	QMap< mlxFonts, int > RegisteredFonts;
 	QFont DefaultFont;
 
-	QAction* mActionFileNew;
-	QAction* mActionFileAssetEditor;
-	QAction* mActionFileLevelEditor;
-	QAction* mActionFileExport2Bin;
-	QAction* mActionFileExit;
-	QAction* mActionEditBuild;
-	QAction* mActionEditPublish;
-	QAction* mActionEditOptions;
-	QAction* mActionHelpAbout;
+	QAction *mActionFileNew;
+	QAction *mActionFileAssetEditor;
+	QAction *mActionFileLevelEditor;
+	QAction *mActionFileExport2Bin;
+	QAction *mActionFileExit;
+	QAction *mActionEditBuild;
+	QAction *mActionEditPublish;
+	QAction *mActionEditOptions;
+	QAction *mActionHelpAbout;
 
-	QTreeWidget* mFileListWidget;
-	MLXPlainTextEdit* mOutputWidget;
+	QTreeWidget *mFileListWidget;
+	MLXPlainTextEdit *mOutputWidget;
 
-	QPushButton* mBuildButton;
-	QPushButton* mDvarsButton;
-	QPushButton* mSaveOutputButton;
-	QPushButton* mOpenLogButton;
-	QPushButton* mDebugButton;
-	QCheckBox* mCompileEnabledWidget;
-	QComboBox* mCompileModeWidget;
-	QCheckBox* mLightEnabledWidget;
-	QComboBox* mLightQualityWidget;
-	QCheckBox* mLinkEnabledWidget;
-	QCheckBox* mRunEnabledWidget;
-	QLineEdit* mRunOptionsWidget;
-	QCheckBox* mIgnoreErrorsWidget;
+	QPushButton *mBuildButton;
+	QPushButton *mDvarsButton;
+	QPushButton *mSaveOutputButton;
+	QPushButton *mOpenLogButton;
+	QPushButton *mDebugButton;
+	QCheckBox *mCompileEnabledWidget;
+	QComboBox *mCompileModeWidget;
+	QCheckBox *mLightEnabledWidget;
+	QComboBox *mLightQualityWidget;
+	QCheckBox *mLinkEnabledWidget;
+	QCheckBox *mRunEnabledWidget;
+	QLineEdit *mRunOptionsWidget;
+	QCheckBox *mIgnoreErrorsWidget;
 
-	mlBuildThread* mBuildThread;
-	mlConvertThread* mConvertThread;
+	mlBuildThread *mBuildThread;
+	mlConvertThread *mConvertThread;
 
-	QDockWidget* mExport2BinGUIWidget;
-	QCheckBox* mExport2BinOverwriteWidget;
-	QLineEdit* mExport2BinTargetDirWidget;
+	QDockWidget *mExport2BinGUIWidget;
+	QCheckBox *mExport2BinOverwriteWidget;
+	QLineEdit *mExport2BinTargetDirWidget;
 
 	QString mTheme;
 	QString mBuildLanguage;
@@ -241,13 +181,13 @@ protected:
 	std::map< ToolTipDictMap, QString > mlxToolTips;
 
 	// Search bar stuff
-private slots:
+	private slots:
 	void OnSearchTextChanged( const QString &text );
 	void OnFindNext();
 	void OnReturnPressed();
 	void ClearHighlights();
 
-private:
+	private:
 	void HighlightAllMatches( const QString &text );
 	void ShowNoResultsPopup();
 	QTextDocument::FindFlags GetSearchFlags();
@@ -261,16 +201,17 @@ private:
 	uint WrapCount;
 };
 
-class Export2BinGroupBox : public QGroupBox
+
+class Export2BinGroupBox: public QGroupBox
 {
-private:
-	MLXMainWindow* parentWindow;
+	private:
+	MLXMainWindow *parentWindow;
 
-protected:
-	void dragEnterEvent(QDragEnterEvent* event);
-	void dragLeaveEvent(QDragLeaveEvent* event);
-	void dropEvent(QDropEvent *event);
+	protected:
+	void dragEnterEvent( QDragEnterEvent *event );
+	void dragLeaveEvent( QDragLeaveEvent *event );
+	void dropEvent( QDropEvent *event );
 
-public:
-	Export2BinGroupBox(QWidget *parent, MLXMainWindow* parent_window);
+	public:
+	Export2BinGroupBox( QWidget *parent, MLXMainWindow *parent_window );
 };

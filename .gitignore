@@ -3,7 +3,7 @@ ipch
 x64
 sdk
 bin
-.vs/
+.vs
 *.sdf
 *.opensdf
 *.suo
