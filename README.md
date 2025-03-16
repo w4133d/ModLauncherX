@@ -1,5 +1,5 @@
 # ModLauncherX
-I'll get around to updating this eventually lmao
+I'll get around to updating the readme eventually lmao
 
 ## Original description:
 
