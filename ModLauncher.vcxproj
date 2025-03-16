@@ -460,7 +460,7 @@
       <QtMocFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).moc</QtMocFileName>
     </ClCompile>
     <ClCompile Include="MLXCallbacks.cpp" />
-    <ClCompile Include="MLXPlainTextEdit.cpp" />
+    <ClCompile Include="MLXOutputHighlighter.cpp" />
     <ClCompile Include="MLXThreads.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -528,7 +528,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dvar.h" />
-    <QtMoc Include="MLXPlainTextEdit.h" />
+    <QtMoc Include="MLXOutputHighlighter.h" />
     <QtMoc Include="MLXThreads.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

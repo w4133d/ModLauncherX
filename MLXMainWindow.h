@@ -19,7 +19,7 @@
 #pragma once
 
 #include "stdafx.h"
-#include "MLXPlainTextEdit.h"
+#include "MLXOutputHighlighter.h"
 #include "MLXThreads.h"
 
 
@@ -31,18 +31,27 @@ enum mlItemType
 	ML_ITEM_MOD
 };
 
+enum mlxFonts
+{
+	FIRA_CODE,
+	INTER,
+	LATO
+};
+
+
 
 class MLXMainWindow: public QMainWindow
 {
 	Q_OBJECT
 
-		friend class Export2BinGroupBox;
+	friend class Export2BinGroupBox;
 
 	public:
 	MLXMainWindow();
 	~MLXMainWindow();
 
 	void UpdateDB();
+	QFont GetFont( mlxFonts font_enum );
 
 	void OnCreateItemResult( CreateItemResult_t *CreateItemResult, bool IOFailure );
 	CCallResult<MLXMainWindow, CreateItemResult_t> mSteamCallResultCreateItem;
@@ -80,12 +89,6 @@ class MLXMainWindow: public QMainWindow
 	void SteamUpdate();
 
 	protected:
-	enum mlxFonts
-	{
-		FIRA_CODE,
-		INTER,
-		LATO
-	};
 
 	enum ToolTipDictMap
 	{
@@ -99,6 +102,8 @@ class MLXMainWindow: public QMainWindow
 		TOOLTIP_SAVE_OUTPUT,
 		TOOLTIP_OPEN_LOG,
 		TOOLTIP_IGNORE_ERRORS,
+		TOOLTIP_OUTPUT_USES_MONO_FONT,
+		TOOLTIP_OUTPUT_USES_COLOR_CODES
 	};
 
 	// Seems like this isn't used - pv
@@ -122,6 +127,7 @@ class MLXMainWindow: public QMainWindow
 
 	QMap< mlxFonts, int > RegisteredFonts;
 	QFont DefaultFont;
+	QFont mlx_output_font;
 
 	QAction *mActionFileNew;
 	QAction *mActionFileAssetEditor;
@@ -134,7 +140,7 @@ class MLXMainWindow: public QMainWindow
 	QAction *mActionHelpAbout;
 
 	QTreeWidget *mFileListWidget;
-	MLXPlainTextEdit *mOutputWidget;
+	QPlainTextEdit *mOutputWidget;
 
 	QPushButton *mBuildButton;
 	QPushButton *mDvarsButton;
@@ -149,6 +155,9 @@ class MLXMainWindow: public QMainWindow
 	QCheckBox *mRunEnabledWidget;
 	QLineEdit *mRunOptionsWidget;
 	QCheckBox *mIgnoreErrorsWidget;
+	MLXOutputHighlighter *syntax_highlighter;
+
+	QStatusBar *StatusBar;
 
 	mlBuildThread *mBuildThread;
 	mlConvertThread *mConvertThread;
@@ -177,7 +186,7 @@ class MLXMainWindow: public QMainWindow
 
 	QStringList mRunDvars;
 
-	/// Contains a mapped dict of tooltip definitions for easy definition and application
+	/// Contains a mapped dict of tooltips for easy definition and application
 	std::map< ToolTipDictMap, QString > mlxToolTips;
 
 	// Search bar stuff
@@ -189,7 +198,6 @@ class MLXMainWindow: public QMainWindow
 
 	private:
 	void HighlightAllMatches( const QString &text );
-	void ShowNoResultsPopup();
 	QTextDocument::FindFlags GetSearchFlags();
 
 	QLineEdit *SearchBar;

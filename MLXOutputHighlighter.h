@@ -19,21 +19,19 @@
 #pragma once
 
 #include "stdafx.h"
-
-class MLXPlainTextEdit: public QPlainTextEdit
+//#include "MLXMainWindow.h"
+ 
+class MLXOutputHighlighter: public QSyntaxHighlighter
 {
 	Q_OBJECT
 
 	public:
-	MLXPlainTextEdit( QWidget *parent = nullptr ): QPlainTextEdit( parent )
+	MLXOutputHighlighter( QTextDocument *parent ) : QSyntaxHighlighter( parent )
 	{
-		setReadOnly( true ); // Prevent user from typing
 	}
 
-	QColor DefaultOutputColor = QColor( "#b2b2b2" );
+	QColor default_color;
 
-	public slots:
-	void appendColoredText( const QString &text );
-	void handleColorCodes( QString &segment, QTextCursor &cursor );
-	QColor getSelectedTextColor();
+	protected:
+	void highlightBlock( const QString &text ) override;
 };

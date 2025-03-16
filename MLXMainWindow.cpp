@@ -122,6 +122,7 @@ MLXMainWindow::MLXMainWindow()
 	mRunOptionsWidget = new QLineEdit();
 	mRunOptionsWidget->setSizePolicy( QSizePolicy::Minimum, QSizePolicy::Minimum );
 	mRunOptionsWidget->setToolTip( mlxToolTips[ TOOLTIP_EXEC_ARGS ] );
+	mRunOptionsWidget->setPlaceholderText( "Enter custom run arguments...");
 	ActionsLayout->addWidget( mRunOptionsWidget );
 
 	mBuildButton = new QPushButton( "Build" );
@@ -171,7 +172,7 @@ MLXMainWindow::MLXMainWindow()
 	SearchBar = new QLineEdit( this );
 	SearchBar->setMaximumWidth( 150 );
 	SearchBar->setPlaceholderText( "Enter search..." );
-	connect( SearchBar, SIGNAL( SearchBar->textEdited() ), this, SLOT( OnSearchTextChanged( const QString & text ) ) );
+	connect( SearchBar, SIGNAL( textEdited( const QString & ) ), this, SLOT( OnSearchTextChanged( const QString & ) ) );
 	connect( SearchBar, SIGNAL( returnPressed() ), this, SLOT( OnReturnPressed() ) );
 	FindSublayout->addWidget( SearchBar );
 
@@ -188,18 +189,19 @@ MLXMainWindow::MLXMainWindow()
 	WholeWordCheck = new QCheckBox( "Match Whole Word", this );
 	SearchLayout->addWidget( WholeWordCheck );
 
-
-
 	///////////////////
 	// OUTPUT WIDGET //
 	///////////////////
 
-	mOutputWidget = new MLXPlainTextEdit( this );
-	CentralWidget->addWidget( mOutputWidget );
-
-	//mOutputWidget->DefaultOutputColor = mOutputWidget->textCursor().charFormat().foreground().color();
-
+	mOutputWidget = new QPlainTextEdit( this );
+	mOutputWidget->setReadOnly( true );
+	
+	syntax_highlighter = new MLXOutputHighlighter( Settings.value( "UseColorCodes", true ).toBool() ? mOutputWidget->document() : nullptr );
+	// For search highlighting
 	LastMatchCursor = mOutputWidget->textCursor();
+	mOutputWidget->appendPlainText( "Yo fam, I am in ^2Green^7, now i'm in ^1RED!!! ^6hehe" );
+
+	CentralWidget->addWidget( mOutputWidget );
 
 	setCentralWidget( CentralWidget );
 
@@ -211,8 +213,20 @@ MLXMainWindow::MLXMainWindow()
 		<< "mp_waterpark" << "mp_western" << "zm_castle" << "zm_factory" << "zm_genesis" << "zm_island" << "zm_levelcommon"
 		<< "zm_stalingrad" << "zm_zod";
 
+	////////////////
+	// STATUS BAR //
+	////////////////
+
+	StatusBar = new QStatusBar();
+	setStatusBar( StatusBar );
+	StatusBar->showMessage( "T7x Launcher - pv" );
+
+	////////
+	// YE //
+	////////
+
 	Settings.beginGroup( "MainWindow" );
-	resize( QSize( 800, 600 ) );
+	resize( QSize( 1024, 768 ) );
 	move( QPoint( 200, 200 ) );
 	restoreGeometry( Settings.value( "Geometry" ).toByteArray() );
 	restoreState( Settings.value( "State" ).toByteArray() );
@@ -221,7 +235,7 @@ MLXMainWindow::MLXMainWindow()
 	SteamAPI_Init();
 
 	connect( &mTimer, SIGNAL( timeout() ), this, SLOT( SteamUpdate() ) );
-	mTimer.start( 1000 );
+	mTimer.start( 2000 );
 
 	PopulateFileList();
 	UpdateTheme();
@@ -231,67 +245,132 @@ MLXMainWindow::~MLXMainWindow()
 {
 }
 
+void MLXMainWindow::UpdateTheme()
+{
+	if( mTheme == "Default" )
+	{
+		qApp->setStyle( "WindowsVista" );
+		qApp->setStyleSheet( "" );
+
+		syntax_highlighter->default_color = QColor( "#242323" );
+	}
+	else if( mTheme == "Default Dark" )
+	{
+		qApp->setStyle( "Fusion" );
+		qApp->setStyleSheet( "" );
+
+		syntax_highlighter->default_color = QColor( "#b2b2b2" );
+	}
+	else if( mTheme == "Modern" )
+	{
+		qApp->setStyle( "Windows11" );
+		qApp->setStyleSheet( "" );
+
+		syntax_highlighter->default_color = QColor( "#b2b2b2" );
+	}
+	else if( mTheme == "Treyarch" )
+	{
+		qApp->setStyle( "Windows" );
+		QFile file( QString( "%1/radiant/stylesheet.qss" ).arg( mToolsPath ) );
+		file.open( QFile::ReadOnly );
+		QString styleSheet = QLatin1String( file.readAll() );
+		file.close();
+		qApp->setStyleSheet( styleSheet );
+		
+		syntax_highlighter->default_color = QColor( "#b2b2b2" );
+	}
+	else if( mTheme == "T7x" )
+	{
+		qApp->setStyle( "Windows" );
+		QFile file( QString( "%1/bin/t7x_themes/pv_t7x_stylesheet.qss" ).arg( mToolsPath ) );
+		file.open( QFile::ReadOnly );
+		QString styleSheet = QLatin1String( file.readAll() );
+		file.close();
+		qApp->setStyleSheet( styleSheet );
+
+		syntax_highlighter->default_color = QColor( "#b2b2b2" );
+	}
+
+	mOutputWidget->setFont( QSettings().value("UseMonoOutputFont", true).toBool() ? GetFont(FIRA_CODE) : DefaultFont);
+	syntax_highlighter->rehighlight();
+}
+
+QFont MLXMainWindow::GetFont( mlxFonts font_enum )
+{
+	return QFont( QFontDatabase::applicationFontFamilies( RegisteredFonts[ font_enum ] ).at( 0 ) );
+}
+
+void MLXMainWindow::RegisterFonts()
+{
+	RegisteredFonts[ FIRA_CODE ] = QFontDatabase::addApplicationFont( ":resources/fonts/FiraCode-Regular.ttf" );
+	RegisteredFonts[ INTER ] = QFontDatabase::addApplicationFont( ":resources/fonts/Inter_18pt-Regular.ttf" );
+	RegisteredFonts[ LATO ] = QFontDatabase::addApplicationFont( ":resources/fonts/Lato-Regular.ttf" );
+
+	QString font_out = QString( "'%1'\n" ).arg( qApp->font().family() );
+	for( int id : RegisteredFonts.values() )
+	{
+		if( id == -1 )
+		{
+			QMessageBox::critical( this, QString( "ERROR" ), QString( "One or more fonts failed to register!" ) );
+		}
+
+		font_out.append( QString( "'%1'\n" ).arg( QFontDatabase::applicationFontFamilies( id ).at( 0 ) ) );
+	}
+
+	DefaultFont = qApp->font().family();
+	//QMessageBox::information( this, QString( "Fonts" ), QString( "Successfully loaded fonts:\n%1" ).arg( font_out ) );
+}
+
 void MLXMainWindow::HighlightAllMatches( const QString &text )
 {
-	// Clear any previous highlights
-	ClearHighlights();
-
 	QTextDocument *document = mOutputWidget->document();
 	QTextCursor cursor( document );
 
-	QTextCharFormat highlightFormat;
-	highlightFormat.setBackground( HighlightColor );
+	QTextCharFormat highlight_format;
+	highlight_format.setBackground( HighlightColor );
 
-	int matchCount = 0;
+	int match_count = 0;
 	while( !cursor.isNull() && !cursor.atEnd() )
 	{
-		// Find the next occurrence of the text
+		// Find next occurrence
 		cursor = document->find( text, cursor, GetSearchFlags() );
 
 		if( !cursor.isNull() )
 		{
-			// Highlight the text
-			cursor.mergeCharFormat( highlightFormat );
+			cursor.mergeCharFormat( highlight_format );
 
-			// Save the first match as the one to jump to
-			if( matchCount == 0 )
+			// Save first match as the one to jump to
+			if( match_count == 0 )
 			{
 				LastMatchCursor = cursor;
 				mOutputWidget->setTextCursor( LastMatchCursor );
 			}
 
-			matchCount++;
+			match_count++;
 		}
 	}
 
-	// If no matches were found, show a pop-up
-	if( matchCount == 0 )
-		ShowNoResultsPopup();
+	if( match_count == 0 ) StatusBar->showMessage( "No results found", 5000 );
+	else StatusBar->showMessage( QString( "Search: Found %1 matches" ).arg( match_count ) );
 }
 
 void MLXMainWindow::ClearHighlights()
 {
-	// Clear all formatting from the document
 	QTextDocument *document = mOutputWidget->document();
 	QTextCursor cursor( document );
 
-	QTextCharFormat defaultFormat;
-	defaultFormat.setBackground( Qt::transparent );
+	QTextCharFormat default_format;
+	default_format.setBackground( Qt::transparent );
 
 	while( !cursor.isNull() && !cursor.atEnd() )
 	{
 		cursor.select( QTextCursor::WordUnderCursor );
-		cursor.setCharFormat( defaultFormat );
+		cursor.setCharFormat( default_format );
 		cursor.movePosition( QTextCursor::NextWord );
 	}
 
-	// Reset the last match cursor
+	// Reset cursor
 	LastMatchCursor = mOutputWidget->textCursor();
-}
-
-void MLXMainWindow::ShowNoResultsPopup()
-{
-	QMessageBox::information( this, "Search", "No results found." );
 }
 
 QTextDocument::FindFlags MLXMainWindow::GetSearchFlags()
@@ -311,18 +390,20 @@ void MLXMainWindow::DefineToolTips()
 {
 	mlxToolTips[ TOOLTIP_COMPILE ] =
 		"Build/apply changes made in Radaint since last compile." +
-		QString( "\nIf no changes were made, this doesn't need to be checked." );
+		QString( "\nIf no changes were made, this doesn't need to be checked." ) +
+		QString( "\nMake sure \"Link\" is checked, otherwise changes from Radiant will not update in-game." );
 
 	mlxToolTips[ TOOLTIP_LIGHT ] =
 		"Rebuild lighting from scratch. To use lighting built in Radiant instead,\ngo to Radiant --> File " +
-		QString( "--> Export Lighting, and make sure \n\"Export build lighting\" is checked (leave other checkboxes as default)." );
+		QString( "--> Export Lighting, and make sure \n\"Export build lighting\" is checked (leave other checkboxes as default)." ) +
+		QString( "\nMake sure \"Link\" is checked, otherwise changes in lighting will not update in-game." );
 
 	mlxToolTips[ TOOLTIP_LINK ] =
-		"Link all files (scripts, compiled Radiant map, sounds, lighting info, assets, etc.) together." +
-		QString( "This must always be checked, as the Linker generates the files the game actually reads." );
+		"Link all files (scripts, compiled Radiant map, sounds, lighting info, assets, etc.) together.\n" +
+		QString( "This must always be checked, as only the Linker generates files the game actually reads." );
 
 	mlxToolTips[ TOOLTIP_RUN ] =
-		"Runs the game after all build processes have completed.\nNote: This option will be ignored if there are any errors.";
+		"Runs the game after all build processes have completed.\nNote: This option will be ignored if there are any errors (and \"Ignore Errors\" is off).";
 
 	mlxToolTips[ TOOLTIP_EXEC_ARGS ] =
 		"Extra arguments to run the game with.";
@@ -344,6 +425,11 @@ void MLXMainWindow::DefineToolTips()
 		"For advanced users only. This allows you to ignore errors that would otherwise halt the build process," +
 		QString( "\nand continue building your map. Please don't use this unless you know what you're doing, as, you" ) +
 		QString( "\nshould fix errors if they're not letting you build." );
+
+
+	mlxToolTips[ TOOLTIP_OUTPUT_USES_MONO_FONT ] = "Decide whether the output (the text box at the bottom of the launcher\n" +
+		QString( "uses a monospace font. Unchecked uses the default font.\n" ) +
+		QString( "Font used for monospace is \"Fira Code\"" );
 }
 
 void MLXMainWindow::CreateActions()
@@ -676,85 +762,6 @@ void MLXMainWindow::ShowPublishDialog()
 		UpdateWorkshopItem();
 }
 
-void MLXMainWindow::UpdateTheme()
-{
-	if( mTheme == "Default" )
-	{
-		qApp->setStyle( "WindowsVista" );
-		qApp->setStyleSheet( "" );
-		mOutputWidget->setFont( DefaultFont );
-		if( mOutputWidget != nullptr )
-		{
-			mOutputWidget->DefaultOutputColor = QColor( "#242323" );
-		}
-	}
-	else if( mTheme == "Default Dark" )
-	{
-		qApp->setStyle( "Fusion" );
-		qApp->setStyleSheet( "" );
-		mOutputWidget->setFont( DefaultFont );
-		if( mOutputWidget != nullptr )
-		{
-			mOutputWidget->DefaultOutputColor = QColor( "#242323" );
-		}
-	}
-	else if( mTheme == "Modern" )
-	{
-		qApp->setStyle( "Windows11" );
-		qApp->setStyleSheet( "" );
-		mOutputWidget->setFont( DefaultFont );
-		if( mOutputWidget != nullptr )
-		{
-			mOutputWidget->DefaultOutputColor = QColor( "#242323" );
-		}
-	}
-	else if( mTheme == "Treyarch" )
-	{
-		qApp->setStyle( "Windows" );
-		QFile file( QString( "%1/radiant/stylesheet.qss" ).arg( mToolsPath ) );
-		file.open( QFile::ReadOnly );
-		QString styleSheet = QLatin1String( file.readAll() );
-		file.close();
-		qApp->setStyleSheet( styleSheet );
-		mOutputWidget->setFont( DefaultFont );
-	}
-	else if( mTheme == "T7x" )
-	{
-		qApp->setStyle( "Windows" );
-		QFile file( QString( "%1/bin/t7x_themes/pv_t7x_stylesheet.qss" ).arg( mToolsPath ) );
-		file.open( QFile::ReadOnly );
-		QString styleSheet = QLatin1String( file.readAll() );
-		file.close();
-		qApp->setStyleSheet( styleSheet );
-		mOutputWidget->setFont( QFont( QFontDatabase::applicationFontFamilies( RegisteredFonts[ FIRA_CODE ] ).at( 0 ) ) );
-		if( mOutputWidget != nullptr )
-		{
-			mOutputWidget->DefaultOutputColor = QColor( "#b2b2b2" );
-		}
-	}
-}
-
-void MLXMainWindow::RegisterFonts()
-{
-	RegisteredFonts[ FIRA_CODE ] = QFontDatabase::addApplicationFont( ":resources/fonts/FiraCode-Regular.ttf" );
-	RegisteredFonts[ INTER ] = QFontDatabase::addApplicationFont( ":resources/fonts/Inter_18pt-Regular.ttf" );
-	RegisteredFonts[ LATO ] = QFontDatabase::addApplicationFont( ":resources/fonts/Lato-Regular.ttf" );
-
-	QString font_out = QString( "'%1'\n" ).arg( qApp->font().family() );
-	for( int id : RegisteredFonts.values() )
-	{
-		if( id == -1 )
-		{
-			QMessageBox::critical( this, QString( "ERROR" ), QString( "One or more fonts failed to register!" ) );
-		}
-
-		font_out.append( QString( "'%1'\n" ).arg( QFontDatabase::applicationFontFamilies( id ).at( 0 ) ) );
-	}
-
-	DefaultFont = qApp->font().family();
-	//QMessageBox::information( this, QString( "Fonts" ), QString( "Successfully loaded fonts:\n%1" ).arg( font_out ) );
-}
-
 void MLXMainWindow::UpdateWorkshopItem()
 {
 	QJsonObject Root;
@@ -827,34 +834,31 @@ void MLXMainWindow::UpdateWorkshopItem()
 			break;
 		}
 
+		QString status_msg;
+
 		switch( Status )
 		{
 			case EItemUpdateStatus::k_EItemUpdateStatusInvalid:
-				Dialog.setLabelText(
-					QString( "Uploading workshop item '%1': %2" ).arg( QString::number( mFileId ), QString( "Invalid" ) ) );
+				status_msg = "Invalid";
 				break;
 			case EItemUpdateStatus::k_EItemUpdateStatusPreparingConfig:
-				Dialog.setLabelText(
-					QString( "Uploading workshop item '%1': %2" ).arg( QString::number( mFileId ), QString( "Preparing Config" ) ) );
+				status_msg = "Preparing Config";
 				break;
 			case EItemUpdateStatus::k_EItemUpdateStatusPreparingContent:
-				Dialog.setLabelText(
-					QString( "Uploading workshop item '%1': %2" ).arg( QString::number( mFileId ), QString( "Preparing Content" ) ) );
+				status_msg = "Preparing Content";
 				break;
 			case EItemUpdateStatus::k_EItemUpdateStatusUploadingContent:
-				Dialog.setLabelText(
-					QString( "Uploading workshop item '%1': %2" ).arg( QString::number( mFileId ), QString( "Uploading Content" ) ) );
+				status_msg = "Uploading Content";
 				break;
 			case EItemUpdateStatus::k_EItemUpdateStatusUploadingPreviewFile:
-				Dialog.setLabelText(
-					QString( "Uploading workshop item '%1': %2" ).arg( QString::number( mFileId ), QString( "Uploading Preview file" ) ) );
+				status_msg = "Uploading Preview File";
 				break;
 			case EItemUpdateStatus::k_EItemUpdateStatusCommittingChanges:
-				Dialog.setLabelText(
-					QString( "Uploading workshop item '%1': %2" ).arg( QString::number( mFileId ), QString( "Committing Changes" ) ) );
+				status_msg = "Comitting changes";
 				break;
 		}
 
+		Dialog.setLabelText( QString( "Uploading workshop item '%1': %2" ).arg( mFileId ).arg( status_msg ) );
 		Dialog.setMaximum( Total );
 		Dialog.setValue( Processed );
 		QApplication::processEvents( QEventLoop::ExcludeUserInputEvents );

@@ -20,3 +20,7 @@
 - Finish writing tooltips
 
 - Fix highlighting and typing not auto-searching
+
+- Add "Advanced" toolbar section, with compiler, gdtdb & linker GUIs like Export2Bin GUI??
+
+- Open folder when console output has been saved?

@@ -46,7 +46,7 @@
     <ClCompile Include="MLXCallbacks.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MLXPlainTextEdit.cpp">
+    <ClCompile Include="MLXOutputHighlighter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MLXThreads.cpp">
@@ -78,7 +78,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="MLXPlainTextEdit.h">
+    <QtMoc Include="MLXOutputHighlighter.h">
       <Filter>Source Files</Filter>
     </QtMoc>
     <QtMoc Include="MLXThreads.h">

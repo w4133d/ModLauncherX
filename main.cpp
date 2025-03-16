@@ -32,6 +32,7 @@ int main( int argc, char *argv[] )
 	//QCoreApplication::setApplicationVersion();
 
 	MLXMainWindow MainWindow;
+
 	MainWindow.UpdateDB();
 	MainWindow.show();
 

@@ -55,14 +55,12 @@ dvar_s gDvars[] = {
 
 void MLXMainWindow::OnSearchTextChanged( const QString &text )
 {
-	// Clear all highlights if the text is empty
+	ClearHighlights();
 	if( text.isEmpty() )
 	{
-		ClearHighlights();
 		return;
 	}
 
-	// Highlight all occurrences of the text
 	HighlightAllMatches( text );
 }
 
@@ -557,20 +555,32 @@ void MLXMainWindow::OnUGCRequestUGCDetails( SteamUGCRequestUGCDetailsResult_t *R
 void MLXMainWindow::OnEditOptions()
 {
 	QDialog Dialog( this, Qt::WindowTitleHint | Qt::WindowSystemMenuHint | Qt::WindowCloseButtonHint );
-	Dialog.setWindowTitle( "Options" );
+	Dialog.setWindowTitle( "ModLauncherX Options" );
 	Dialog.resize( QSize( 250, 30 ) );
 	//QMessageBox::information( this, QString( "Yo" ), QString( "Width: %1\nHeight: %2" ).arg( QString().setNum( Dialog.size().width()  ), QString().setNum( Dialog.size().height() ) ) );
 
-	QVBoxLayout *Layout = new QVBoxLayout( &Dialog );
-
 	QSettings Settings;
+
+	QVBoxLayout *Layout = new QVBoxLayout( &Dialog );
 
 	//QCheckBox* TreyarchThemeCheckbox = new QCheckBox("Use Treyarch Theme");
 	//TreyarchThemeCheckbox->setToolTip("Toggle between the dark grey Treyarch colors and the default Windows colors");
 	//TreyarchThemeCheckbox->setChecked(Settings.value("UseDarkTheme", false).toBool());
 	//Layout->addWidget( TreyarchThemeCheckbox );
 
-	// THEME //
+	// THEME STUFF //
+
+	QCheckBox *UseMonoOutput = new QCheckBox( "Output uses monospace font" );
+	UseMonoOutput->setToolTip( mlxToolTips[ TOOLTIP_OUTPUT_USES_MONO_FONT ] );
+	UseMonoOutput->setChecked( Settings.value( "UseMonoOutputFont", true ).toBool() );
+	Layout->addWidget( UseMonoOutput );
+
+
+	QCheckBox *UseColorCodes = new QCheckBox( "Output uses color codes" );
+	UseColorCodes->setToolTip( mlxToolTips[ TOOLTIP_OUTPUT_USES_COLOR_CODES ] );
+	UseColorCodes->setChecked( Settings.value( "UseColorCodes", true ).toBool() );
+	Layout->addWidget( UseColorCodes );
+
 
 	QHBoxLayout *ThemeLayout = new QHBoxLayout();
 	ThemeLayout->addWidget( new QLabel( "Theme" ) );
@@ -621,13 +631,20 @@ void MLXMainWindow::OnEditOptions()
 	if( Dialog.exec() != QDialog::Accepted )
 		return;
 
+	// Apply settings
 	mBuildLanguage = LanguageCombo->currentText();
 	mTheme = ThemeCombo->currentText();
+	//mlx_output_font = UseMonoOutput->isChecked() ? GetFont( FIRA_CODE ) : DefaultFont;
+	syntax_highlighter->setDocument( UseColorCodes->isChecked() ? mOutputWidget->document() : nullptr);
 
+	// Save settings
 	Settings.setValue( "BuildLanguage", mBuildLanguage );
 	Settings.setValue( "Theme", mTheme );
+	Settings.setValue( "UseMonoOutputFont", UseMonoOutput->isChecked() );
+	Settings.setValue( "UseColorCodes", UseColorCodes->isChecked() );
 
 	UpdateTheme();
+	StatusBar->showMessage( "Theme updated. Please restart ModLauncherX if you encounter any visual bugs - pv", 7000 );
 }
 
 
@@ -913,7 +930,7 @@ void MLXMainWindow::OnDebugButtonPressed()
 {
 	//QMessageBox::information( this, "Color", "The color of the text cursor is: " + QString( mOutputWidget->getSelectedTextColor().name() ) );
 	UpdateTheme();
-	mOutputWidget->appendColoredText( QString( "[ ModLauncherX ] Theme updated: '%1'\n" ).arg( mTheme ) );
+	mOutputWidget->appendPlainText( QString( "[ ModLauncherX ] Theme updated: '%1'\n" ).arg( mTheme ) );
 }
 
 
@@ -1033,7 +1050,8 @@ void MLXMainWindow::OnExport2BinToggleOverwriteFiles()
 
 void MLXMainWindow::BuildOutputReady( QString Output )
 {
-	mOutputWidget->appendColoredText( Output );
+	const QString timestamp = QTime::currentTime().toString( "[hh:mm:ss.zzz] |> " );
+	mOutputWidget->appendPlainText( timestamp + Output );
 }
 
 

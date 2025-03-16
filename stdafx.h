@@ -23,5 +23,5 @@
 #include "dvar.h"
 
 
-class mlMainWindow;
+class MLXMainWindow;
 class mlExport2BinWidget;
