@@ -1,17 +1,14 @@
 # ModLauncherX
-I'll get around to updating the readme eventually lmao
 
-## Original description:
+A fully fleshed out upgrade of the original Launcher for Black Ops III Mod Tools.
 
-ModTools Launcher App
+## Features
+- I will document them all here @ some point, there are loads!
 
-This is the Launcher App used by the Call of Duty: Black Ops III Mod Tools.
-
-It's licensed under the Apache 2.0 License, a copy of which is included in the LICENSE file.
 
 # Compiling
 
-You'll need the Qt and Steam SDK installed. We use VS 2012 to compile but newer versions should work too, even though we don't provide a Qt Creator project it should still be possible to use it if you create your own project.
+You'll need the Qt and Steam SDK installed.
 
 Openning the project with a different version of VS may display a prompt to upgrade, this is ok and shouldn't cause any problems.
 
