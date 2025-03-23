@@ -92,10 +92,10 @@
     </QtModules>
   </PropertyGroup>
   <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='External_Release|x64'">
-    <QtInstall>6.8.2_msvc2022_54</QtInstall>
+    <QtInstall>6.8.2_msvc2022_64</QtInstall>
     <QtModules>
     </QtModules>
-    <QtOptionsBuildLog>true</QtOptionsBuildLog>
+    <QtOptionsBuildLog>false</QtOptionsBuildLog>
   </PropertyGroup>
   <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <QtModules>
@@ -172,6 +172,8 @@
     <LinkIncremental />
     <OutDir>bin\External_Release\</OutDir>
     <LibraryPath>D:\Qt\6.8.2\msvc2022_64\lib;$(LibraryPath)</LibraryPath>
+    <ExternalIncludePath>$(ExternalIncludePath)</ExternalIncludePath>
+    <IncludePath>D:\Qt\6.8.2\msvc2022_64\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -460,8 +462,10 @@
       <QtMocFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).moc</QtMocFileName>
     </ClCompile>
     <ClCompile Include="MLXCallbacks.cpp" />
+    <ClCompile Include="MLXMapList.cpp" />
     <ClCompile Include="MLXOutputHighlighter.cpp" />
     <ClCompile Include="MLXThreads.cpp" />
+    <ClCompile Include="MLXUtils.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -528,6 +532,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dvar.h" />
+    <QtMoc Include="MLXMapList.h" />
+    <ClInclude Include="MLXUtils.h" />
     <QtMoc Include="MLXOutputHighlighter.h" />
     <QtMoc Include="MLXThreads.h" />
   </ItemGroup>

@@ -24,4 +24,3 @@
 
 
 class MLXMainWindow;
-class mlExport2BinWidget;

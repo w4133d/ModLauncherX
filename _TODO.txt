@@ -1,26 +1,5 @@
-- ------- MAP PACKAGER -------
+... Check google doc
 
-- Collapsible/customisable map/mod folders?
+https://docs.google.com/document/d/1gINga-wSmnE3G1NHAGoJh6dMRadaUMppjgnmaO036U0/edit?tab=t.0
 
-- Open .szc file on context menu ✅
-
-- Colour coding on output window ✅
-
-- Fix borders on buttons and text boxes for T7x theme
-
-- Add more dvars
-	- +set com_clientfieldsDebug 1
-
-- Validation check for thumbnail when uploading to workshop
-
-- Show hint when duplicate asset errors are detected in output?
-	- Take that to a new level --> have every error mapped, and link devraw docs page based on error, or show a hint like "all errors ignorable", or like "3 errors"
-	- Or even have a separate output widget just for errors?
-
-- Finish writing tooltips
-
-- Fix highlighting and typing not auto-searching
-
-- Add "Advanced" toolbar section, with compiler, gdtdb & linker GUIs like Export2Bin GUI??
-
-- Open folder when console output has been saved?
+ye

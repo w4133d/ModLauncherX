@@ -21,17 +21,10 @@
 #include "stdafx.h"
 #include "MLXOutputHighlighter.h"
 #include "MLXThreads.h"
+#include "MLXMapList.h"
 
 
-
-enum mlItemType
-{
-	ML_ITEM_UNKNOWN,
-	ML_ITEM_MAP,
-	ML_ITEM_MOD
-};
-
-enum mlxFonts
+enum mlx_fonts
 {
 	FIRA_CODE,
 	INTER,
@@ -51,7 +44,7 @@ class MLXMainWindow: public QMainWindow
 	~MLXMainWindow();
 
 	void UpdateDB();
-	QFont GetFont( mlxFonts font_enum );
+	QFont GetFont( mlx_fonts font_enum );
 
 	void OnCreateItemResult( CreateItemResult_t *CreateItemResult, bool IOFailure );
 	CCallResult<MLXMainWindow, CreateItemResult_t> mSteamCallResultCreateItem;
@@ -62,7 +55,31 @@ class MLXMainWindow: public QMainWindow
 	void OnUGCRequestUGCDetails( SteamUGCRequestUGCDetailsResult_t *RequestDetailsResult, bool IOFailure );
 	CCallResult<MLXMainWindow, SteamUGCRequestUGCDetailsResult_t> mSteamCallResultRequestDetails;
 
-	protected slots:
+	void UpdateTheme();
+
+	void crash_handler();
+
+	static void set_crash_handler()
+	{
+		if( _instance )
+		{
+			_instance->crash_handler();
+		}
+	}
+
+	void setup_crash_handler()
+	{
+		_instance = this;
+		std::set_terminate( []()
+							{
+								MLXMainWindow::set_crash_handler();
+							} );
+	}
+
+	static MLXMainWindow *_instance;
+
+	//protected slots:
+	public slots:
 	void OnFileNew();
 	void OnFileAssetEditor();
 	void OnFileLevelEditor();
@@ -72,8 +89,11 @@ class MLXMainWindow: public QMainWindow
 	void OnEditOptions();
 	void OnEditDvars();
 	void OnHelpAbout();
+	void OnHelpOpenGitHubRepo();
+	void OnHelpReportIssue();
 	void OnOpenZoneFile();
 	void OnOpenSZCFile();
+	void OnOpenScriptFile( const char *_ext );
 	void OnOpenModRootFolder();
 	void OnRunMapOrMod();
 	void OnSaveOutputLog() const;
@@ -85,10 +105,11 @@ class MLXMainWindow: public QMainWindow
 	void OnExport2BinToggleOverwriteFiles();
 	void BuildOutputReady( QString Output );
 	void BuildFinished();
-	void ContextMenuRequested();
+	//void ContextMenuRequested(); // Moved to MLXMapList class
 	void SteamUpdate();
 
-	protected:
+	//protected:
+	public:
 
 	enum ToolTipDictMap
 	{
@@ -99,11 +120,25 @@ class MLXMainWindow: public QMainWindow
 		TOOLTIP_EXEC_ARGS,
 		TOOLTIP_BUILD,
 		TOOLTIP_DVARS,
+		TOOLTIP_COPY_OUTPUT,
 		TOOLTIP_SAVE_OUTPUT,
 		TOOLTIP_OPEN_LOG,
 		TOOLTIP_IGNORE_ERRORS,
 		TOOLTIP_OUTPUT_USES_MONO_FONT,
-		TOOLTIP_OUTPUT_USES_COLOR_CODES
+		TOOLTIP_OUTPUT_USES_COLOR_CODES,
+		TOOLTIP_SEARCH_HIGHLIGHT_COLOR,
+		TOOLTIP_THEME,
+		TOOLTIP_CLEAN_XPAKS
+	};
+
+	enum HighlightColors
+	{
+		HIGHLIGHT_RED,
+		HIGHLIGHT_ORANGE,
+		HIGHLIGHT_YELLOW,
+		HIGHLIGHT_GREEN,
+		HIGHLIGHT_BLUE,
+		HIGHLIGHT_PURPLE
 	};
 
 	// Seems like this isn't used - pv
@@ -115,7 +150,6 @@ class MLXMainWindow: public QMainWindow
 	void PopulateFileList();
 	void UpdateWorkshopItem();
 	void ShowPublishDialog();
-	void UpdateTheme();
 	void RegisterFonts();
 	void DefineToolTips();
 
@@ -125,7 +159,7 @@ class MLXMainWindow: public QMainWindow
 
 	void InitExport2BinGUI();
 
-	QMap< mlxFonts, int > RegisteredFonts;
+	QMap< mlx_fonts, int > RegisteredFonts;
 	QFont DefaultFont;
 	QFont mlx_output_font;
 
@@ -138,8 +172,20 @@ class MLXMainWindow: public QMainWindow
 	QAction *mActionEditPublish;
 	QAction *mActionEditOptions;
 	QAction *mActionHelpAbout;
+	QAction *mActionHelpOpenGitHub;
+	QAction *mActionHelpReportIssue;
+	QAction *mActionToolsSaveLauncherOutput;
+	QAction *mActionToolsCopyLauncherOutput;
+	QAction *mActionToolsConsoleMPLog;
+	QAction *mActionToolsMLXDebugLog;
+	QAction *mActionToolsIgnoreErrors;
+	QAction *mActionFolderRoot;
+	QAction *mActionFolderUsermaps;
+	QAction *mActionFolderShare;
+	QAction *mActionFolderScriptsGlobal;
+	QAction *mActionFolderSndAliases;
 
-	QTreeWidget *mFileListWidget;
+	MLXMapList *mFileListWidget;
 	QPlainTextEdit *mOutputWidget;
 
 	QPushButton *mBuildButton;
@@ -147,6 +193,7 @@ class MLXMainWindow: public QMainWindow
 	QPushButton *mSaveOutputButton;
 	QPushButton *mOpenLogButton;
 	QPushButton *mDebugButton;
+	QCheckBox *mCleanXPAKsWidget;
 	QCheckBox *mCompileEnabledWidget;
 	QComboBox *mCompileModeWidget;
 	QCheckBox *mLightEnabledWidget;
@@ -156,6 +203,7 @@ class MLXMainWindow: public QMainWindow
 	QLineEdit *mRunOptionsWidget;
 	QCheckBox *mIgnoreErrorsWidget;
 	MLXOutputHighlighter *syntax_highlighter;
+	QColor SearchHighlightColor;
 
 	QStatusBar *StatusBar;
 
@@ -181,22 +229,19 @@ class MLXMainWindow: public QMainWindow
 	QString mType;
 	QStringList mTags;
 
-	QString mGamePath;
-	QString mToolsPath;
-
 	QStringList mRunDvars;
 
 	/// Contains a mapped dict of tooltips for easy definition and application
 	std::map< ToolTipDictMap, QString > mlxToolTips;
 
 	// Search bar stuff
-	private slots:
+	protected slots:
 	void OnSearchTextChanged( const QString &text );
 	void OnFindNext();
 	void OnReturnPressed();
 	void ClearHighlights();
 
-	private:
+	protected:
 	void HighlightAllMatches( const QString &text );
 	QTextDocument::FindFlags GetSearchFlags();
 
@@ -205,7 +250,6 @@ class MLXMainWindow: public QMainWindow
 	QCheckBox *CaseSensitiveCheck;
 	QCheckBox *WholeWordCheck;
 	QTextCursor LastMatchCursor;
-	QColor HighlightColor;
 	uint WrapCount;
 };
 

@@ -19,22 +19,14 @@
 #pragma once
 
 #include "stdafx.h"
-//#include "MLXMainWindow.h"
- 
-class MLXOutputHighlighter: public QSyntaxHighlighter
+
+namespace MLXUtils
 {
-	Q_OBJECT
+	void open_folder_select_file( QString file_path );
+	void open_bo3_folder( const QString dir_path = "" );
+	void copy_file_to_clipboard( const QString &filePath );
 
-	public:
-	MLXOutputHighlighter( QTextDocument *parent ) : QSyntaxHighlighter( parent )
-	{
-	}
-	void SetFont( QFont font );
-
-	QColor default_color;
-
-	protected:
-	void highlightBlock( const QString &text ) override;
-
-	QTextCharFormat text_format;
-};
+	extern const QString BO3_ROOT_PATH;
+	extern const QString DEBUG_LOG_PATH;
+	extern const QString MAP_LIST_SAVE_PATH;
+}

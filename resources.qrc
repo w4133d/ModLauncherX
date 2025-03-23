@@ -3,7 +3,6 @@
         <file>resources/AssetEditor.png</file>
         <file>resources/BlackOps3.png</file>
         <file>resources/Radiant.png</file>
-        <file>resources/ModLauncher.png</file>
         <file>stylesheet/down_arrow.png</file>
         <file>stylesheet/handle.png</file>
         <file>resources/FileNew.png</file>
@@ -17,5 +16,18 @@
         <file>resources/publish.png</file>
         <file>resources/fonts/Lato-Regular.ttf</file>
         <file>resources/Export2Bin.png</file>
+        <file>resources/json.png</file>
+        <file>resources/folder.png</file>
+        <file>resources/zone.png</file>
+        <file>resources/clean.png</file>
+        <file>resources/delete.png</file>
+        <file>resources/gsc.png</file>
+        <file>ModLauncher.ico</file>
+        <file>resources/ModLauncherX.png</file>
+        <file>resources/NewFolder.png</file>
+        <file>resources/about.png</file>
+        <file>resources/OpenExternal.png</file>
+        <file>resources/ContactUs.png</file>
+        <file>resources/Quit.png</file>
     </qresource>
 </RCC>

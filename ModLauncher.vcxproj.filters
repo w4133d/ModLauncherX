@@ -52,6 +52,12 @@
     <ClCompile Include="MLXThreads.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MLXUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MLXMapList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ModLauncher.rc">
@@ -76,12 +82,18 @@
     <ClInclude Include="dvar.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="MLXUtils.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="MLXOutputHighlighter.h">
       <Filter>Source Files</Filter>
     </QtMoc>
     <QtMoc Include="MLXThreads.h">
+      <Filter>Source Files</Filter>
+    </QtMoc>
+    <QtMoc Include="MLXMapList.h">
       <Filter>Source Files</Filter>
     </QtMoc>
   </ItemGroup>

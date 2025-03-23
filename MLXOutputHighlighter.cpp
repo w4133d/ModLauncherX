@@ -36,7 +36,7 @@ void MLXOutputHighlighter::highlightBlock( const QString &text )
 	{
 		QRegularExpressionMatch match = iterator.next();
 		QString _text = match.captured();
-		QColor color = default_color;
+		QColor color;
 
 		// Check which color we need to change to
 		switch( _text[ 1 ].toLatin1() )
@@ -51,10 +51,10 @@ void MLXOutputHighlighter::highlightBlock( const QString &text )
 			//case '7': color = default_color; break;
 			case '8': color = QColor( "#ADD8E6" ); break; // Light Blue
 			case '9': color = QColor( "#FFA500" ); break; // 
+			default: color = default_color; break;
 		}
 		
 		setFormat( match.capturedStart(), match.capturedStart() + 2, default_color );
 		setFormat( match.capturedStart() + 2, match.capturedEnd(), color );
 	}
 }
-
