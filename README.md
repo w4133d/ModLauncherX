@@ -1,11 +1,23 @@
 # ModLauncherX
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 A fully fleshed out upgrade of the original Launcher for Black Ops III Mod Tools.
 
 ## Features
 - I will document them all here @ some point, there are loads!
 
+=======
+A fully fleshed out enhancement of the original Launcher for Black Ops III Mod Tools.
+
+## Features
+- I will document them all here @ some point, cuz there are loads of sweet changes
+
+
+## Credits
+VerK0 - Some sick ideas / design suggestions
+
+>>>>>>> Stashed changes
 =======
 A fully fleshed out enhancement of the original Launcher for Black Ops III Mod Tools.
 
